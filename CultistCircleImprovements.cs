@@ -63,9 +63,6 @@ public class CultistCircleImprovements(
     private void AdjustDirectRewardMappings()
     {
         var cultistCircleConfig = _hideoutConfig.CultistCircle;
-        var modPath = modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly());
-        var customCrafts = jsonUtil.DeserializeFromFile<List<DirectRewardSettings>>(Path.Combine(modPath, "Data", "Crafts.json")) ?? throw new FileNotFoundException();
-        var contentBackPortCrafts = jsonUtil.DeserializeFromFile<List<DirectRewardSettings>>(Path.Combine(modPath, "Data", "ContentBackportCrafts.json")) ?? throw new FileNotFoundException();
         
         // Clone the default rewards back to the config
         cultistCircleConfig.DirectRewards = _defaultDirectRewards
@@ -78,22 +75,22 @@ public class CultistCircleImprovements(
             })
             .ToList();
         
-        if (customCrafts.Count != 0)
+        if (ModConfig.CustomCrafts.Count != 0)
         {
-            AddCustomCrafts(customCrafts);
+            AddCustomCrafts();
         }
         
-        if (contentBackPortCrafts.Count != 0 && installedMods.Any(x => x.ModMetadata.ModGuid == "com.wtt.contentbackport"))
+        if (ModConfig.ContentBackportCrafts.Count != 0 && installedMods.Any(x => x.ModMetadata.ModGuid == "com.wtt.contentbackport"))
         {
-            AddBackportCrafts(contentBackPortCrafts);
+            AddBackportCrafts();
         }
     }
 
-    private void AddCustomCrafts(List<DirectRewardSettings> customCrafts)
+    private void AddCustomCrafts()
     {
         var cultistCircleConfig = _hideoutConfig.CultistCircle;
 
-        var toAdd = customCrafts
+        var toAdd = ModConfig.CustomCrafts
             .Where(drs =>
                 drs.Reward.Count > 0 && drs.RequiredItems.Count > 0 &&
                 !cultistCircleConfig.DirectRewards.Any(x =>
@@ -107,11 +104,11 @@ public class CultistCircleImprovements(
         logger.Info($"[CCI] Added {toAdd.Count} Cultist Circle crafts");
     }
 
-    private void AddBackportCrafts(List<DirectRewardSettings> contentBackPortCrafts)
+    private void AddBackportCrafts()
     {
         var cultistCircleConfig = _hideoutConfig.CultistCircle;
 
-        var toAdd = contentBackPortCrafts
+        var toAdd = ModConfig.ContentBackportCrafts
             .Where(drs =>
                 drs.Reward.Count > 0 && drs.RequiredItems.Count > 0 &&
                 !cultistCircleConfig.DirectRewards.Any(x =>
