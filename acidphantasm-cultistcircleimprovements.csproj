@@ -38,6 +38,12 @@
   <ItemGroup>
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
+    
+  <ItemGroup>
+    <None Update="LICENSE">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
         <PropertyGroup>

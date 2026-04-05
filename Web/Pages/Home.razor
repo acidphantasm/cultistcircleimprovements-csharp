@@ -34,7 +34,7 @@
                              Size="Size.Medium"
                              Icon="@Icons.Material.Filled.VerifiedUser"
                              Color="Color.Secondary"
-                             Href="https://forge.sp-tarkov.com/mod/2416/enable-labyrinth"
+                             Href="https://forge.sp-tarkov.com/mod/2657/cultist-circle-improvements"
                              Target="_blank"
                              Rel="nofollow noopener">Update Available - Download from SPT Forge</MudChip>
                 }
@@ -178,7 +178,7 @@
             httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("acidphantasm");
             httpClient.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
 
-            var release = await httpClient.GetFromJsonAsync<ReleaseInformation>("https://api.github.com/repos/acidphantasm/enablelabyrinth-csharp/releases/latest");
+            var release = await httpClient.GetFromJsonAsync<ReleaseInformation>("https://api.github.com/repos/acidphantasm/cultistcircleimprovements-csharp/releases/latest");
             if (release != null)
             {
                 Version latestVersion = new(release.Version);
