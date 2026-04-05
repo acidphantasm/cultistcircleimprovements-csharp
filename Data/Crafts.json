@@ -1,0 +1,22 @@
+﻿[
+  {
+    "reward": [
+      "5fca138c2a7b221b2852a5c6"
+    ],
+    "requiredItems": [
+      "590c695186f7741e566b64a2"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "59ef13ca86f77445fd0e2483"
+    ],
+    "requiredItems": [
+      "634959225289190e5e773b3b"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  }
+]

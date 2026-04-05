@@ -1,0 +1,13 @@
+﻿[
+  {
+    "Version": "1.0.0",
+    "ReleaseDate": "April 4, 2026",
+    "IsLatest": true,
+    "NewFeatures": [
+      "Initial Release"
+    ],
+    "Changes": [],
+    "BugFixes": [],
+    "KnownIssues": []
+  }
+]

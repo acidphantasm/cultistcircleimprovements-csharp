@@ -1,0 +1,19 @@
+﻿using SPTarkov.Server.Core.Models.Spt.Mod;
+using SPTarkov.Server.Web;
+
+namespace _cultistCircleImprovements;
+
+public record ModMetadata : AbstractModMetadata, IModWebMetadata
+{
+    public override string ModGuid { get; init; } = "com.acidphantasm.cultistcircleimprovements";
+    public override string Name { get; init; } = "Cultist Circle Improvements";
+    public override string Author { get; init; } = "acidphantasm";
+    public override List<string>? Contributors { get; init; }
+    public override SemanticVersioning.Version Version { get; init; } = new("1.0.0");
+    public override SemanticVersioning.Range SptVersion { get; init; } = new("~4.0.10");
+    public override List<string>? Incompatibilities { get; init; }
+    public override Dictionary<string, SemanticVersioning.Range>? ModDependencies { get; init; }
+    public override string? Url { get; init; }
+    public override bool? IsBundleMod { get; init; }
+    public override string? License { get; init; } = "MIT";
+}

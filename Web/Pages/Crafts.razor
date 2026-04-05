@@ -1,0 +1,251 @@
+﻿@page "/cci/crafts"
+@using SPTarkov.Server.Core.Models.Spt.Config
+@using SPTarkov.Server.Core.Models.Common
+@using MudBlazor
+@layout MainLayout
+@inject ISnackbar Snackbar
+
+<MudMainContent>
+    <MudContainer Class="mb-20">
+        <MudItem xs="12" Class="d-flex justify-start mb-4">
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" Size="Size.Medium"
+                       OnClick="AddCraft">Add New Craft</MudButton>
+        </MudItem>
+
+        <MudExpansionPanels MultiExpansion="true">
+            <MudExpansionPanel Class="mud-expansion-panels-borders ma-3 pa-5" Text="Custom Crafts" Expanded=true>
+                <MudGrid Spacing="3">
+                    @for (var i = 0; i < ModConfig.CustomCrafts.Count; i++)
+                    {
+                        var craftIndex = i;
+                        var craft = ModConfig.CustomCrafts[craftIndex];
+
+                        <MudItem xs="12">
+                            <MudPaper Class="pa-4" Elevation="1">
+                                <div class="d-flex justify-between align-center mb-2">
+                                    <MudText Typo="Typo.h6">Craft #@craftIndex</MudText>
+                                    <MudSpacer/>
+                                    <MudButton Color="Color.Error" Variant="Variant.Filled" Size="Size.Small"
+                                               OnClick="() => RemoveCraft(craftIndex)">Remove Craft</MudButton>
+                                </div>
+
+                                <MudDivider Class="my-2"/>
+
+                                @for (var r = 0; r < rewardStrings[craftIndex].Count; r++)
+                                {
+                                    var rewardIndex = r;
+                                    <MudItem xs="12" Class="d-flex align-center mb-1">
+                                        <MudTextField T="string"
+                                                      Value="rewardStrings[craftIndex][rewardIndex]"
+                                                      ValueChanged="s => UpdateReward(craftIndex, rewardIndex, s)"
+                                                      Label="Reward MongoID"
+                                                      Variant="Variant.Filled"
+                                                      Class="mr-2"/>
+                                        <MudButton Color="Color.Secondary" Variant="Variant.Filled" Size="Size.Small"
+                                                   OnClick="() => RemoveReward(craftIndex, rewardIndex)">Remove</MudButton>
+                                    </MudItem>
+                                }
+
+                                <MudItem xs="12" Class="d-flex mb-2">
+                                    <MudButton Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small"
+                                               OnClick="() => AddReward(craftIndex)">Add Reward</MudButton>
+                                </MudItem>
+
+                                @for (var r = 0; r < requiredItemStrings[craftIndex].Count; r++)
+                                {
+                                    var requiredIndex = r;
+                                    <MudItem xs="12" Class="d-flex align-center mb-1">
+                                        <MudTextField T="string"
+                                                      Value="requiredItemStrings[craftIndex][requiredIndex]"
+                                                      ValueChanged="s => UpdateRequired(craftIndex, requiredIndex, s)"
+                                                      Label="Required Item MongoID"
+                                                      Variant="Variant.Filled"
+                                                      Class="mr-2"/>
+                                        <MudButton Color="Color.Secondary" Variant="Variant.Filled" Size="Size.Small"
+                                                   OnClick="() => RemoveRequiredItem(craftIndex, requiredIndex)">Remove</MudButton>
+                                    </MudItem>
+                                }
+
+                                <MudItem xs="12" Class="d-flex mb-2">
+                                    <MudButton Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small"
+                                               OnClick="() => AddRequiredItem(craftIndex)">Add Required Item</MudButton>
+                                </MudItem>
+
+                                <MudItem xs="12" Class="d-flex align-center mb-2">
+                                    <MudText Typo="Typo.subtitle2" Class="mr-2">Craft Time (seconds)</MudText>
+                                    <MudButton Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">@craft.CraftTimeSeconds</MudButton>
+                                    <MudSlider T="int" @bind-Value="craft.CraftTimeSeconds" Min="1" Max="86400" Step="1" ValueLabel="true" Color="Color.Info" Size="Size.Medium"/>
+                                </MudItem>
+
+                                <MudItem xs="12" Class="d-flex align-center mb-2">
+                                    <MudCheckBox @bind-Value="craft.Repeatable" Label="Repeatable" Color="Color.Primary"/>
+                                </MudItem>
+                            </MudPaper>
+                        </MudItem>
+                    }
+                </MudGrid>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    </MudContainer>
+</MudMainContent>
+
+@code {
+    private List<List<string>> rewardStrings = new();
+    private List<List<string>> requiredItemStrings = new();
+
+    protected override void OnInitialized()
+    {
+        InitializeStringLists();
+    }
+
+    private void InitializeStringLists()
+    {
+        rewardStrings = ModConfig.CustomCrafts
+            .Select(c => c.Reward.Select(m => m.ToString()).ToList())
+            .ToList();
+
+        requiredItemStrings = ModConfig.CustomCrafts
+            .Select(c => c.RequiredItems.Select(m => m.ToString()).ToList())
+            .ToList();
+    }
+    
+    private void AddCraft()
+    {
+        var craft = new DirectRewardSettings
+        {
+            Reward = new List<MongoId>(),
+            RequiredItems = new List<MongoId>(),
+            CraftTimeSeconds = 3600,
+            Repeatable = false
+        };
+        ModConfig.CustomCrafts.Add(craft);
+
+        rewardStrings.Add(new List<string> { string.Empty });
+        requiredItemStrings.Add(new List<string> { string.Empty });
+
+        StateHasChanged();
+    }
+
+    private void RemoveCraft(int craftIndex)
+    {
+        if (craftIndex >= 0 && craftIndex < ModConfig.CustomCrafts.Count)
+        {
+            ModConfig.CustomCrafts.RemoveAt(craftIndex);
+            rewardStrings.RemoveAt(craftIndex);
+            requiredItemStrings.RemoveAt(craftIndex);
+        }
+    }
+
+    private void AddReward(int craftIndex)
+    {
+        rewardStrings[craftIndex].Add(string.Empty);
+        StateHasChanged();
+    }
+
+    private void RemoveReward(int craftIndex, int rewardIndex)
+    {
+        if (rewardStrings[craftIndex].Count <= 1)
+        {
+            Snackbar.Add($"Cannot remove only reward", Severity.Error, cfg => cfg.ShowCloseIcon = false);
+            return;
+        }
+        
+        rewardStrings[craftIndex].RemoveAt(rewardIndex);
+
+        ModConfig.CustomCrafts[craftIndex].Reward = rewardStrings[craftIndex]
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Select(s =>
+            {
+                try
+                {
+                    return new MongoId(s);
+                }
+                catch
+                {
+                    return null;
+                }
+            })
+            .Where(m => m != null)
+            .ToList()!;
+    }
+
+    private void AddRequiredItem(int craftIndex)
+    {
+        requiredItemStrings[craftIndex].Add(string.Empty);
+        StateHasChanged();
+    }
+
+    private void RemoveRequiredItem(int craftIndex, int itemIndex)
+    {
+        if (requiredItemStrings[craftIndex].Count <= 1)
+        {
+            Snackbar.Add($"Cannot remove only required item", Severity.Error, cfg => cfg.ShowCloseIcon = false);
+            return;
+        }
+        
+        requiredItemStrings[craftIndex].RemoveAt(itemIndex);
+        
+        ModConfig.CustomCrafts[craftIndex].RequiredItems = requiredItemStrings[craftIndex]
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Select(s =>
+            {
+                try
+                {
+                    return new MongoId(s);
+                }
+                catch
+                {
+                    return null;
+                }
+            })
+            .Where(m => m != null)
+            .ToList()!;
+    }
+    
+    private void UpdateReward(int craftIndex, int rewardIndex, string value)
+    {
+        rewardStrings[craftIndex][rewardIndex] = value;
+
+        // Only convert valid MongoIds
+        ModConfig.CustomCrafts[craftIndex].Reward = rewardStrings[craftIndex]
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Select(s =>
+            {
+                try
+                {
+                    return new MongoId(s);
+                }
+                catch
+                {
+                    return null;
+                }
+            })
+            .Where(m => m != null)
+            .ToList()!;
+    }
+
+    private void UpdateRequired(int craftIndex, int requiredIndex, string value)
+    {
+        requiredItemStrings[craftIndex][requiredIndex] = value;
+
+        ModConfig.CustomCrafts[craftIndex].RequiredItems = requiredItemStrings[craftIndex]
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Select(s =>
+            {
+                try
+                {
+                    return new MongoId(s);
+                }
+                catch
+                {
+                    return null;
+                }
+            })
+            .Where(m => m != null)
+            .ToList()!;
+    }
+
+    #region CASCADING PARAMETERS
+    [CascadingParameter] public MainLayout? Layout { get; set; }
+    #endregion
+}

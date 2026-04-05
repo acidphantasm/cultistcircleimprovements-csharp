@@ -1,0 +1,597 @@
+﻿@page "/cci/config"
+@using SPTarkov.Server.Core.Models.Spt.Config
+@using MudBlazor
+@layout MainLayout
+
+<MudMainContent>
+    <MudContainer Class="mb-20">
+        <MudExpansionPanels MultiExpansion="true">
+            <MudExpansionPanel Class="mud-expansion-panels-borders ma-3 pa-5" Text="General Config" Expanded=true>
+                <MudGrid>
+
+                    <MudItem xs="1"/>
+                    <MudItem xs="4">
+                        <MudPaper Class="d-flex align-center mud-width-full ma-1" Elevation="0">
+                            <MudTooltip Text="Pretty obvious, SAFE max is 5." Color="Color.Primary" Placement="Placement.Right" Arrow="true">
+                                <MudText>Max Reward Item Count</MudText>
+                            </MudTooltip>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        <MudButton Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">@MaxRewardItemCount</MudButton>
+                    </MudItem>
+                    <MudItem xs="5">
+                        <MudPaper Class="d-flex align-center mud-width-full" Elevation="0">
+                            <MudSlider @bind-Value="MaxRewardItemCount" ValueLabel="true" Min="1" Max="7" Step="1" Color="Color.Info" Size="Size.Medium"/>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        @if (MainLayout._appUndoButtonToggle && MainLayout.pendingChanges.Contains("MaxRewardItemCount"))
+                        {
+                            <MudButton OnClick="@((e) => undo_MaxRewardItemCount())" Variant="Variant.Filled" Color="Color.Inherit" Size="Size.Small">Undo</MudButton>
+                        }
+                        else if (MainLayout._appDefaultButtonToggle && MaxRewardItemCount != 5)
+                        {
+                            <MudButton OnClick="@((e) => default_MaxRewardItemCount())" Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">Default</MudButton>
+                        }
+                    </MudItem>
+
+                    <MudItem xs="1"/>
+                    <MudItem xs="4">
+                        <MudPaper Class="d-flex align-center mud-width-full ma-1" Elevation="0">
+                            <MudTooltip Text="Minimum multiplier applied to sacrificed sum value when rolling for a random reward result." Color="Color.Primary" Placement="Placement.Right" Arrow="true">
+                                <MudText>Reward Price Multiplier Minimum</MudText>
+                            </MudTooltip>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        <MudButton Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">@RewardPriceMultiplierMin</MudButton>
+                    </MudItem>
+                    <MudItem xs="5">
+                        <MudPaper Class="d-flex align-center mud-width-full" Elevation="0">
+                            <MudSlider @bind-Value="RewardPriceMultiplierMin" ValueLabel="true" Min="0.0" Max="RewardPriceMultiplierMax" Step="0.01" Color="Color.Info" Size="Size.Medium"/>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        @if (MainLayout._appUndoButtonToggle && MainLayout.pendingChanges.Contains("RewardPriceMultiplierMin"))
+                        {
+                            <MudButton OnClick="@((e) => undo_RewardPriceMultiplierMin())" Variant="Variant.Filled" Color="Color.Inherit" Size="Size.Small">Undo</MudButton>
+                        }
+                        else if (MainLayout._appDefaultButtonToggle && Math.Abs(RewardPriceMultiplierMin - 0.7) > 0.0001)
+                        {
+                            <MudButton OnClick="@((e) => default_RewardPriceMultiplierMin())" Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">Default</MudButton>
+                        }
+                    </MudItem>
+
+                    <MudItem xs="1"/>
+                    <MudItem xs="4">
+                        <MudPaper Class="d-flex align-center mud-width-full ma-1" Elevation="0">
+                            <MudTooltip Text="Maximum multiplier applied to sacrificed sum value when rolling for a random reward result." Color="Color.Primary" Placement="Placement.Right" Arrow="true">
+                                <MudText>Reward Price Multiplier Maximum</MudText>
+                            </MudTooltip>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        <MudButton Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">@RewardPriceMultiplierMax</MudButton>
+                    </MudItem>
+                    <MudItem xs="5">
+                        <MudPaper Class="d-flex align-center mud-width-full" Elevation="0">
+                            <MudSlider @bind-Value="RewardPriceMultiplierMax" ValueLabel="true" Min="RewardPriceMultiplierMin" Max="5.0" Step="0.01" Color="Color.Info" Size="Size.Medium"/>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        @if (MainLayout._appUndoButtonToggle && MainLayout.pendingChanges.Contains("RewardPriceMultiplierMax"))
+                        {
+                            <MudButton OnClick="@((e) => undo_RewardPriceMultiplierMax())" Variant="Variant.Filled" Color="Color.Inherit" Size="Size.Small">Undo</MudButton>
+                        }
+                        else if (MainLayout._appDefaultButtonToggle && Math.Abs(RewardPriceMultiplierMax - 1.4) > 0.0001)
+                        {
+                            <MudButton OnClick="@((e) => default_RewardPriceMultiplierMax())" Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">Default</MudButton>
+                        }
+                    </MudItem>
+
+                    <MudItem xs="1"/>
+                    <MudItem xs="4">
+                        <MudPaper Class="d-flex align-center mud-width-full ma-1" Elevation="0">
+                            <MudTooltip Text="Chance a non-direct craft will result in Hideout/Task reward items" Color="Color.Primary" Placement="Placement.Right" Arrow="true">
+                                <MudText>Bonus Chance Multiplier</MudText>
+                            </MudTooltip>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        <MudButton Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">@BonusChanceMultiplier</MudButton>
+                    </MudItem>
+                    <MudItem xs="5">
+                        <MudPaper Class="d-flex align-center mud-width-full" Elevation="0">
+                            <MudSlider @bind-Value="BonusChanceMultiplier" ValueLabel="true" Min="0" Max="1" Step="0.01" Color="Color.Info" Size="Size.Medium"/>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        @if (MainLayout._appUndoButtonToggle && MainLayout.pendingChanges.Contains("BonusChanceMultiplier"))
+                        {
+                            <MudButton OnClick="@((e) => undo_BonusChanceMultiplier())" Variant="Variant.Filled" Color="Color.Inherit" Size="Size.Small">Undo</MudButton>
+                        }
+                        else if (MainLayout._appDefaultButtonToggle && Math.Abs(BonusChanceMultiplier - 0.25) > 0.0001)
+                        {
+                            <MudButton OnClick="@((e) => default_BonusChanceMultiplier())" Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">Default</MudButton>
+                        }
+                    </MudItem>
+
+                    <MudItem xs="1"/>
+                    <MudItem xs="4">
+                        <MudPaper Class="d-flex align-center mud-width-full ma-1" Elevation="0">
+                            <MudTooltip Text="How long a resulting Hideout/Task reward craft will take." Color="Color.Primary" Placement="Placement.Right" Arrow="true">
+                                <MudText>Hideout Task Reward Time in Seconds</MudText>
+                            </MudTooltip>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        <MudButton Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">@HideoutTaskRewardTimeSeconds</MudButton>
+                    </MudItem>
+                    <MudItem xs="5">
+                        <MudPaper Class="d-flex align-center mud-width-full" Elevation="0">
+                            <MudSlider @bind-Value="HideoutTaskRewardTimeSeconds" ValueLabel="true" Min="60" Max="86400" Step="1" Color="Color.Info" Size="Size.Medium"/>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        @if (MainLayout._appUndoButtonToggle && MainLayout.pendingChanges.Contains("HideoutTaskRewardTimeSeconds"))
+                        {
+                            <MudButton OnClick="@((e) => undo_HideoutTaskRewardTimeSeconds())" Variant="Variant.Filled" Color="Color.Inherit" Size="Size.Small">Undo</MudButton>
+                        }
+                        else if (MainLayout._appDefaultButtonToggle && HideoutTaskRewardTimeSeconds != 21600)
+                        {
+                            <MudButton OnClick="@((e) => default_HideoutTaskRewardTimeSeconds())" Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">Default</MudButton>
+                        }
+                    </MudItem>
+
+                    <MudItem xs="1"/>
+                    <MudItem xs="4">
+                        <MudPaper Class="d-flex align-center mud-width-full ma-1" Elevation="0">
+                            <MudTooltip Text="If the sacrificed items meet this value threshold after calculation, then the items rewarded will be at least this value. DO NOT SET TOO HIGH." Color="Color.Primary" Placement="Placement.Right" Arrow="true">
+                                <MudText>High Value Threshold Roubles</MudText>
+                            </MudTooltip>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        <MudButton Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">@HighValueThresholdRub</MudButton>
+                    </MudItem>
+                    <MudItem xs="5">
+                        <MudPaper Class="d-flex align-center mud-width-full" Elevation="0">
+                            <MudSlider @bind-Value="HighValueThresholdRub" ValueLabel="true" Min="1" Max="1000000" Step="1" Color="Color.Info" Size="Size.Medium"/>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        @if (MainLayout._appUndoButtonToggle && MainLayout.pendingChanges.Contains("HighValueThresholdRub"))
+                        {
+                            <MudButton OnClick="@((e) => undo_HighValueThresholdRub())" Variant="Variant.Filled" Color="Color.Inherit" Size="Size.Small">Undo</MudButton>
+                        }
+                        else if (MainLayout._appDefaultButtonToggle && HighValueThresholdRub != 70000)
+                        {
+                            <MudButton OnClick="@((e) => default_HighValueThresholdRub())" Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">Default</MudButton>
+                        }
+                    </MudItem>
+
+                    <MudItem xs="1"/>
+                    <MudItem xs="4">
+                        <MudPaper Class="d-flex align-center mud-width-full ma-1" Elevation="0">
+                            <MudTooltip Text="How much the sacrificed item must be valued after calculation in order to result in rewarding Hideout/Task items." Color="Color.Primary" Placement="Placement.Right" Arrow="true">
+                                <MudText>Hideout Craft Sacrifice Threshold Roubles</MudText>
+                            </MudTooltip>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        <MudButton Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">@HideoutCraftSacrificeThresholdRub</MudButton>
+                    </MudItem>
+                    <MudItem xs="5">
+                        <MudPaper Class="d-flex align-center mud-width-full" Elevation="0">
+                            <MudSlider @bind-Value="HideoutCraftSacrificeThresholdRub" ValueLabel="true" Min="1" Max="1000000" Step="1" Color="Color.Info" Size="Size.Medium"/>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        @if (MainLayout._appUndoButtonToggle && MainLayout.pendingChanges.Contains("HideoutCraftSacrificeThresholdRub"))
+                        {
+                            <MudButton OnClick="@((e) => undo_HideoutCraftSacrificeThresholdRub())" Variant="Variant.Filled" Color="Color.Inherit" Size="Size.Small">Undo</MudButton>
+                        }
+                        else if (MainLayout._appDefaultButtonToggle && HideoutCraftSacrificeThresholdRub != 400000)
+                        {
+                            <MudButton OnClick="@((e) => default_HideoutCraftSacrificeThresholdRub())" Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">Default</MudButton>
+                        }
+                    </MudItem>
+
+                    <MudItem xs="1"/>
+                    <MudItem xs="4">
+                        <MudPaper Class="d-flex align-center mud-width-full ma-1" Elevation="0">
+                            <MudTooltip Text="If this is not -1, it is the override for all craft timers EXCLUDING direct crafts." Color="Color.Primary" Placement="Placement.Right" Arrow="true">
+                                <MudText>Craft Time Override</MudText>
+                            </MudTooltip>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        <MudButton Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">@CraftTimeOverride</MudButton>
+                    </MudItem>
+                    <MudItem xs="5">
+                        <MudPaper Class="d-flex align-center mud-width-full" Elevation="0">
+                            <MudSlider @bind-Value="CraftTimeOverride" ValueLabel="true" Min="-1" Max="86400" Step="1" Color="Color.Info" Size="Size.Medium"/>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="1">
+                        @if (MainLayout._appUndoButtonToggle && MainLayout.pendingChanges.Contains("CraftTimeOverride"))
+                        {
+                            <MudButton OnClick="@((e) => undo_CraftTimeOverride())" Variant="Variant.Filled" Color="Color.Inherit" Size="Size.Small">Undo</MudButton>
+                        }
+                        else if (MainLayout._appDefaultButtonToggle && CraftTimeOverride != -1)
+                        {
+                            <MudButton OnClick="@((e) => default_CraftTimeOverride())" Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">Default</MudButton>
+                        }
+                    </MudItem>
+                    
+                </MudGrid>
+            </MudExpansionPanel>
+            <MudExpansionPanel Class="mud-expansion-panels-borders ma-3 pa-5" Text="Craft Time Thresholds" Expanded=true>
+                <MudGrid>
+                    
+                    <MudItem xs="12">
+                        <MudPaper Class="d-flex align-center mud-width-full ma-1" Elevation="0">
+                            <MudText Align="Align.Center">These thresholds are the fallback for when you put items into the Cultist Circle and they ARE NOT a predefined craft, NOR did the result roll to be a Hideout/Task reward. Please read the below if you don't understand. If you still don't understand, probably best to ignore this section. The values should automatically adjust to keep the thresholds unique and not overlap.</MudText>
+                        </MudPaper>
+                        <MudDivider Class="my-2"/>
+                        <MudPaper Class="d-flex align-center mud-width-full ma-1" Elevation="0">
+                            <MudText Align="Align.Center">MATH: value sacrificed * (Random(RewardPriceMultiplierMin, RewardPriceMultiplierMax) * (1 + (Hideout Management Progress / 10000)).</MudText>
+                        </MudPaper>
+                        <MudPaper Class="d-flex align-center mud-width-full ma-1" Elevation="0">
+                            <MudText Align="Align.Center">EXAMPLE: 100k sacrifice value, lv51 hideout management, 1.14 roll on reward multi: 100,000 value * (1.14 * ( 1 + (5100 / 10000) = 172,140 value sacrificed</MudText>
+                        </MudPaper>
+                        <MudDivider Class="my-2"/>
+                    </MudItem>
+                    
+                    <MudItem xs="12">
+                        <MudPaper Class="d-flex align-center mud-width-full ma-1" Elevation="0">
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Dark"
+                                       Size="Size.Large"
+                                       OnClick="@(() => RemoveLastCraft())">
+                                Remove Last
+                            </MudButton>
+                            <MudSpacer/>
+                            <MudButton Variant="Variant.Filled"
+                                       Color="Color.Dark"
+                                       Size="Size.Large"
+                                       OnClick="@(() => AddCraft())">
+                                Add Threshold
+                            </MudButton>
+                        </MudPaper>
+                    </MudItem>
+                    
+                    <MudDivider Class="my-2"/>
+                    @for (var i = 0; i < ModConfig.Config.CraftTimeThresholds.Count; i++)
+                    {
+                        var index = i;
+
+                        <MudItem xs="1"/>
+                        <MudItem xs="4">
+                            <MudPaper Class="d-flex align-center mud-width-full ma-1" Elevation="0">
+                                <MudTooltip Text="Minimum rouble value for this tier" Color="Color.Primary">
+                                    <MudText>Threshold #@index Min Value</MudText>
+                                </MudTooltip>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem xs="1">
+                            <MudButton Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">
+                                @GetMin(index)
+                            </MudButton>
+                        </MudItem>
+                        <MudItem xs="5">
+                            <MudPaper Class="d-flex align-center mud-width-full" Elevation="0">
+                                <MudSlider T="int" Value="@GetMin(index)"
+                                           ValueChanged="@(v => SetMin(index, v))"
+                                           ValueLabel="true"
+                                           Min="1" Max="1000000" Step="1"
+                                           Color="Color.Info"
+                                           Size="Size.Medium"/>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem xs="1"/>
+
+                        <MudItem xs="1"/>
+                        <MudItem xs="4">
+                            <MudPaper Class="d-flex align-center mud-width-full ma-1" Elevation="0">
+                                <MudTooltip Text="Maximum rouble value for this tier" Color="Color.Primary">
+                                    <MudText>Threshold #@index Max Value</MudText>
+                                </MudTooltip>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem xs="1">
+                            <MudButton Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">
+                                @GetMax(index)
+                            </MudButton>
+                        </MudItem>
+                        <MudItem xs="5">
+                            <MudPaper Class="d-flex align-center mud-width-full" Elevation="0">
+                                <MudSlider T="int" Value="@GetMax(index)"
+                                           ValueChanged="@(v => SetMax(index, v))"
+                                           ValueLabel="true"
+                                           Min="1" Max="1000000" Step="1"
+                                           Color="Color.Info"
+                                           Size="Size.Medium"/>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem xs="1"/>
+
+                        <MudItem xs="1"/>
+                        <MudItem xs="4">
+                            <MudPaper Class="d-flex align-center mud-width-full ma-1" Elevation="0">
+                                <MudTooltip Text="Craft duration in seconds" Color="Color.Primary">
+                                    <MudText>Threshold #@index Craft Timer</MudText>
+                                </MudTooltip>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem xs="1">
+                            <MudButton Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">
+                                @GetCraftTime(index)
+                            </MudButton>
+                        </MudItem>
+                        <MudItem xs="5">
+                            <MudPaper Class="d-flex align-center mud-width-full" Elevation="0">
+                                <MudSlider T="int" Value="@GetCraftTime(index)"
+                                           ValueChanged="@(v => SetCraftTime(index, v))"
+                                           ValueLabel="true"
+                                           Min="1" Max="86400" Step="1"
+                                           Color="Color.Info"
+                                           Size="Size.Medium"/>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem xs="1"/>
+
+                        <MudDivider Class="my-2"/>
+                    }
+                    
+                </MudGrid>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    </MudContainer>
+</MudMainContent>
+
+@code {
+    private int MaxRewardItemCount
+    {
+        get => ModConfig.Config.MaxRewardItemCount;
+        set
+        {
+            Utils.UpdateView(value, ModConfig.OriginalConfig.MaxRewardItemCount);
+            ModConfig.Config.MaxRewardItemCount = value;
+        }
+    }
+    private void undo_MaxRewardItemCount() => MaxRewardItemCount = ModConfig.OriginalConfig.MaxRewardItemCount;
+    private void default_MaxRewardItemCount() => MaxRewardItemCount = 5;
+    
+    private double RewardPriceMultiplierMin
+    {
+        get => ModConfig.Config.RewardPriceMultiplierMinMax.Min;
+        set
+        {
+            Utils.UpdateView(value, ModConfig.OriginalConfig.RewardPriceMultiplierMinMax.Min);
+            ModConfig.Config.RewardPriceMultiplierMinMax.Min = value;
+        }
+    }
+    private void undo_RewardPriceMultiplierMin() => RewardPriceMultiplierMin = ModConfig.OriginalConfig.RewardPriceMultiplierMinMax.Min;
+    private void default_RewardPriceMultiplierMin() => RewardPriceMultiplierMin = 0.7d;
+    
+    private double RewardPriceMultiplierMax
+    {
+        get => ModConfig.Config.RewardPriceMultiplierMinMax.Max;
+        set
+        {
+            Utils.UpdateView(value, ModConfig.OriginalConfig.RewardPriceMultiplierMinMax.Max);
+            ModConfig.Config.RewardPriceMultiplierMinMax.Max = value;
+        }
+    }
+    private void undo_RewardPriceMultiplierMax() => RewardPriceMultiplierMax = ModConfig.OriginalConfig.RewardPriceMultiplierMinMax.Max;
+    private void default_RewardPriceMultiplierMax() => RewardPriceMultiplierMax = 1.4d;
+    
+    private double BonusChanceMultiplier
+    {
+        get => ModConfig.Config.BonusChanceMultiplier;
+        set
+        {
+            Utils.UpdateView(value, ModConfig.OriginalConfig.BonusChanceMultiplier);
+            ModConfig.Config.BonusChanceMultiplier = value;
+        }
+    }
+    private void undo_BonusChanceMultiplier() => BonusChanceMultiplier = ModConfig.OriginalConfig.BonusChanceMultiplier;
+    private void default_BonusChanceMultiplier() => BonusChanceMultiplier = 0.25d;
+    
+    private int HideoutTaskRewardTimeSeconds
+    {
+        get => ModConfig.Config.HideoutTaskRewardTimeSeconds;
+        set
+        {
+            Utils.UpdateView(value, ModConfig.OriginalConfig.HideoutTaskRewardTimeSeconds);
+            ModConfig.Config.HideoutTaskRewardTimeSeconds = value;
+        }
+    }
+    private void undo_HideoutTaskRewardTimeSeconds() => HideoutTaskRewardTimeSeconds = ModConfig.OriginalConfig.HideoutTaskRewardTimeSeconds;
+    private void default_HideoutTaskRewardTimeSeconds() => HideoutTaskRewardTimeSeconds = 21600;
+    
+    private int HighValueThresholdRub
+    {
+        get => ModConfig.Config.HighValueThresholdRub;
+        set
+        {
+            Utils.UpdateView(value, ModConfig.OriginalConfig.HighValueThresholdRub);
+            ModConfig.Config.HighValueThresholdRub = value;
+        }
+    }
+    private void undo_HighValueThresholdRub() => HighValueThresholdRub = ModConfig.OriginalConfig.HighValueThresholdRub;
+    private void default_HighValueThresholdRub() => HighValueThresholdRub = 70000;
+    
+    private int HideoutCraftSacrificeThresholdRub
+    {
+        get => ModConfig.Config.HideoutCraftSacrificeThresholdRub;
+        set
+        {
+            Utils.UpdateView(value, ModConfig.OriginalConfig.HideoutCraftSacrificeThresholdRub);
+            ModConfig.Config.HideoutCraftSacrificeThresholdRub = value;
+        }
+    }
+    private void undo_HideoutCraftSacrificeThresholdRub() => HideoutCraftSacrificeThresholdRub = ModConfig.OriginalConfig.HideoutCraftSacrificeThresholdRub;
+    private void default_HideoutCraftSacrificeThresholdRub() => HideoutCraftSacrificeThresholdRub = 400000;
+    
+    private int CraftTimeOverride
+    {
+        get => ModConfig.Config.CraftTimeOverride;
+        set
+        {
+            Utils.UpdateView(value, ModConfig.OriginalConfig.CraftTimeOverride);
+            ModConfig.Config.CraftTimeOverride = value;
+        }
+    }
+    private void undo_CraftTimeOverride() => CraftTimeOverride = ModConfig.OriginalConfig.CraftTimeOverride;
+    private void default_CraftTimeOverride() => CraftTimeOverride = -1;
+    
+    private int GetCraftTime(int index)
+    {
+        var list = ModConfig.Config.CraftTimeThresholds;
+
+        if (list == null || index < 0 || index >= list.Count)
+            return 0;
+
+        return list[index].CraftTimeSeconds;
+    }
+
+    private void SetCraftTime(int index, int value)
+    {
+        var original = ModConfig.OriginalConfig.CraftTimeThresholds[index].CraftTimeSeconds;
+
+        Utils.UpdateView(value, original);
+
+        ModConfig.Config.CraftTimeThresholds[index].CraftTimeSeconds = value;
+    }
+    
+    private int GetMin(int index)
+    {
+        var list = ModConfig.Config.CraftTimeThresholds;
+
+        if (index < 0 || index >= list.Count)
+            return 0;
+
+        return list[index].Min;
+    }
+
+    private void SetMin(int index, int value)
+    {
+        var tiers = ModConfig.Config.CraftTimeThresholds;
+
+        value = index == 0 ? Math.Max(1, value) : Math.Max(tiers[index - 1].Max + 1, value);
+
+        var original = ModConfig.OriginalConfig.CraftTimeThresholds[index].Min;
+        Utils.UpdateView(value, original);
+
+        tiers[index].Min = value;
+
+        if (tiers[index].Max < value)
+            tiers[index].Max = value;
+
+        NormalizeForward(index);
+    }
+    
+    private int GetMax(int index)
+    {
+        var list = ModConfig.Config.CraftTimeThresholds;
+
+        if (index < 0 || index >= list.Count)
+            return 0;
+
+        return list[index].Max;
+    }
+
+    private void SetMax(int index, int value)
+    {
+        var tiers = ModConfig.Config.CraftTimeThresholds;
+
+        value = Math.Max(tiers[index].Min, value);
+
+        var original = ModConfig.OriginalConfig.CraftTimeThresholds[index].Max;
+        Utils.UpdateView(value, original);
+
+        tiers[index].Max = value;
+
+        NormalizeForward(index);
+    }
+    
+    private void NormalizeForward(int startIndex)
+    {
+        var tiers = ModConfig.Config.CraftTimeThresholds;
+
+        for (var i = startIndex + 1; i < tiers.Count; i++)
+        {
+            tiers[i].Min = tiers[i - 1].Max + 1;
+
+            if (tiers[i].Max < tiers[i].Min)
+                tiers[i].Max = tiers[i].Min;
+        }
+    }
+    
+    private void AddCraft()
+    {
+        var tiers = ModConfig.Config.CraftTimeThresholds;
+
+        var last = tiers.LastOrDefault();
+
+        var newMin = last != null ? last.Max + 1 : 1;
+        var newMax = newMin + 99999;
+
+        tiers.Add(new CraftTimeThreshold
+        {
+            Min = newMin,
+            Max = newMax,
+            CraftTimeSeconds = last?.CraftTimeSeconds + 7200 ?? 43200
+        });
+
+        NormalizeAll();
+        StateHasChanged();
+    }
+    
+    private void RemoveLastCraft()
+    {
+        var tiers = ModConfig.Config.CraftTimeThresholds;
+
+        if (tiers.Count <= 1)
+            return;
+
+        tiers.RemoveAt(tiers.Count - 1);
+
+        NormalizeAll();
+        StateHasChanged();
+    }
+    
+    private void NormalizeAll()
+    {
+        var tiers = ModConfig.Config.CraftTimeThresholds;
+
+        if (tiers.Count == 0)
+            return;
+
+        var currentMin = 1;
+        var stepSize = 100000;
+
+        for (var i = 0; i < tiers.Count; i++)
+        {
+            tiers[i].Min = currentMin;
+
+            if (i == tiers.Count - 1)
+            {
+                tiers[i].Max = 99999999;
+            }
+            else
+            {
+                tiers[i].Max = currentMin + stepSize - 1;
+            }
+
+            currentMin = tiers[i].Max + 1;
+        }
+    }
+
+    #region CASCADING PARAMETERS
+    [CascadingParameter] public MainLayout? Layout { get; set; }
+    #endregion
+}

@@ -1,0 +1,47 @@
+﻿{
+  "MaxRewardItemCount": 5,
+  "RewardPriceMultiplierMinMax":
+  {
+    "min": 0.7,
+    "max": 1.4
+  },
+  "BonusChanceMultiplier": 0.25,
+  "HideoutTaskRewardTimeSeconds": 21600,
+  "HighValueThresholdRub": 70000,
+  "HideoutCraftSacrificeThresholdRub": 400000,
+  "CraftTimeOverride": -1,
+  "CraftTimeThresholds": [
+    {
+      "min": 1,
+      "max": 100000,
+      "craftTimeSeconds": 7200
+    },
+    {
+      "min": 100001,
+      "max": 200000,
+      "craftTimeSeconds": 14400
+    },
+    {
+      "min": 200001,
+      "max": 300000,
+      "craftTimeSeconds": 21600
+    },
+    {
+      "min": 300001,
+      "max": 400000,
+      "craftTimeSeconds": 28800
+    },
+    {
+      "min": 400001,
+      "max": 99999999,
+      "craftTimeSeconds": 36000
+    }
+  ],
+  "ConfigAppSettings":
+  {
+    "ShowUndo": false,
+    "ShowDefault": false,
+    "DisableAnimations": false,
+    "AllowUpdateChecks": false
+  }
+}

@@ -1,0 +1,279 @@
+﻿[
+  {
+    "reward": [
+      "60db29ce99594040e04c4a27",
+      "635a758bfefc88a93f021b8a"
+    ],
+    "requiredItems": [
+      "68f25faa22c8979ee308f4da"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "64d0b40fbe2eed70e254e2d4"
+    ],
+    "requiredItems": [
+      "68f25fdf928cd23ddf0471fb"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "5ab8f85d86f7745cd93a1cf5",
+      "5aa2b923e5b5b000137b7589",
+      "5aa2b9aee5b5b00015693121",
+      "5ab8f4ff86f77431c60d91ba"
+    ],
+    "requiredItems": [
+      "68f25f3a5d977110860c3350"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "5d0379a886f77420407aa271"
+    ],
+    "requiredItems": [
+      "68f2608301fb9de974058be6"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "59e3658a86f7741776641ac4"
+    ],
+    "requiredItems": [
+      "68f260d7b84c6e1f8a09cffd"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "59e3658a86f7741776641ac4"
+    ],
+    "requiredItems": [
+      "68f260d7b84c6e1f8a09cffd"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "679b9819a2f2dd4da9023512"
+    ],
+    "requiredItems": [
+      "679b992329acd1f2f60985a5"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "572b7d8524597762b472f9d1",
+      "690c70a2a1461a01d605a1bd"
+    ],
+    "requiredItems": [
+      "690c70a2a1461a01d605a1bd"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "68f25da3b84c6e1f8a09cffb",
+      "68f25da3b84c6e1f8a09cffb",
+      "68f25da3b84c6e1f8a09cffb"
+    ],
+    "requiredItems": [
+      "68f25da3b84c6e1f8a09cffb"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "57347c77245977448d35f6e2",
+      "57347c77245977448d35f6e2",
+      "544fb5454bdc2df8738b456a"
+    ],
+    "requiredItems": [
+      "68f25f1201fb9de974058be4"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "5ab8e4ed86f7742d8e50c7fa",
+      "5ab8e4ed86f7742d8e50c7fa"
+    ],
+    "requiredItems": [
+      "68f25eef19a2b503d70dc291"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "5bc9be8fd4351e00334cae6e"
+    ],
+    "requiredItems": [
+      "68f25c64b2b53abd200b954f"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "5b4329075acfc400153b78ff",
+      "56742c324bdc2d150f8b456d"
+    ],
+    "requiredItems": [
+      "68f25eba19a2b503d70dc28f"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "544fb45d4bdc2dee738b4568"
+    ],
+    "requiredItems": [
+      "68f25ce9b2b53abd200b9551"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "59e7635f86f7742cbf2c1095",
+      "59e7635f86f7742cbf2c1095",
+      "5bf3e03b0db834001d2c4a9c",
+      "5bf3e03b0db834001d2c4a9c"
+    ],
+    "requiredItems": [
+      "68f26124b84c6e1f8a09cfff"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "664d3ddfdda2e85aca370d75",
+      "675aaab74bca0b001d02f356",
+      "5e54f62086f774219b0f1937"
+    ],
+    "requiredItems": [
+      "68f261f6928cd23ddf0471fd"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "63a39ce4cd6db0635c1975fa",
+      "620109578d82e67e7911abf2",
+      "5d403f9186f7743cac3f229b"
+    ],
+    "requiredItems": [
+      "6937f02dfd6488bb27024839"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "5c06c6a80db834001b735491",
+      "60a7acf20c5cb24b01346648",
+      "59e7708286f7742cbd762753",
+      "59e7708286f7742cbd762753",
+      "60bf74184a63fc79b60c57f6"
+    ],
+    "requiredItems": [
+      "69398e94ca94fd2877039504"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "5c06c6a80db834001b735491",
+      "60a7acf20c5cb24b01346648",
+      "59e7708286f7742cbd762753",
+      "5aa2b9ede5b5b000137b758b",
+      "60bf74184a63fc79b60c57f6"
+    ],
+    "requiredItems": [
+      "69398e94ca94fd2877039504"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "62a09cfe4f842e1bd12da3e4"
+    ],
+    "requiredItems": [
+      "6937ecf8628ee476240c07cb"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "6937edb912d456a817083e82"
+    ],
+    "requiredItems": [
+      "6937edb912d456a817083e82"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "68f119c6121d878a2303eee3"
+    ],
+    "requiredItems": [
+      "68f11adfcd0babab2c0fb003"
+    ],
+    "craftTimeSeconds": 666,
+    "repeatable": true
+  },
+  {
+    "reward": [
+      "68f11adfcd0babab2c0fb003"
+    ],
+    "requiredItems": [
+      "68f119c6121d878a2303eee3"
+    ],
+    "craftTimeSeconds": 666,
+    "repeatable": true
+  },
+  {
+    "reward": [
+      "59faff1d86f7746c51718c9c"
+    ],
+    "requiredItems": [
+      "68f119c6121d878a2303eee3",
+      "68f11adfcd0babab2c0fb003"
+    ],
+    "craftTimeSeconds": 666,
+    "repeatable": true
+  },
+  {
+    "reward": [
+      "68f117b8121d878a2303eee0"
+    ],
+    "requiredItems": [
+      "68f117b8121d878a2303eee0"
+    ],
+    "craftTimeSeconds": 3960,
+    "repeatable": true
+  }
+]
