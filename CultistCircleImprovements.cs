@@ -1,24 +1,19 @@
-using System.Reflection;
 using _cultistCircleImprovements.Globals;
 using _cultistCircleImprovements.Patches;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
-using SPTarkov.Server.Core.Helpers;
 using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Servers;
-using SPTarkov.Server.Core.Utils;
 
 namespace _cultistCircleImprovements;
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 420)]
+[Injectable(InjectionType.Singleton, TypePriority = OnLoadOrder.PostDBModLoader + 420)]
 public class CultistCircleImprovements(
     IReadOnlyList<SptMod> installedMods,
     ISptLogger<CultistCircleImprovements> logger,
-    ConfigServer configServer,
-    JsonUtil jsonUtil,
-    ModHelper modHelper) : IOnLoad
+    ConfigServer configServer) : IOnLoad
 {
     
     private readonly HideoutConfig _hideoutConfig = configServer.GetConfig<HideoutConfig>();
@@ -26,6 +21,8 @@ public class CultistCircleImprovements(
         
     public Task OnLoad()
     {
+        ModConfig.HasBackport = installedMods.Any(x => x.ModMetadata.ModGuid == "com.wtt.contentbackport");
+        
         new PatchGetCircleCraftingInfo().Enable();
         
         StoreDefaults();
@@ -75,15 +72,47 @@ public class CultistCircleImprovements(
             })
             .ToList();
         
+        if (ModConfig.VanillaCrafts.Count != 0)
+        {
+            AdjustVanillaCrafts();
+        }
+        
         if (ModConfig.CustomCrafts.Count != 0)
         {
             AddCustomCrafts();
         }
         
-        if (ModConfig.ContentBackportCrafts.Count != 0 && installedMods.Any(x => x.ModMetadata.ModGuid == "com.wtt.contentbackport"))
+        if (ModConfig.ContentBackportCrafts.Count != 0 && ModConfig.HasBackport)
         {
             AddBackportCrafts();
         }
+    }
+
+    private void AdjustVanillaCrafts()
+    {
+        var cultistCircleConfig = _hideoutConfig.CultistCircle;
+
+        var adjusted = 0;
+
+        foreach (var modCraft in ModConfig.VanillaCrafts)
+        {
+            if (modCraft.Reward.Count == 0 || modCraft.RequiredItems.Count == 0)
+                continue;
+
+            var existing = cultistCircleConfig.DirectRewards.FirstOrDefault(x =>
+                x.RequiredItems.OrderBy(i => i).SequenceEqual(modCraft.RequiredItems.OrderBy(i => i))
+            );
+
+            if (existing == null) 
+                continue;
+            
+            existing.CraftTimeSeconds = modCraft.CraftTimeSeconds;
+            existing.Repeatable = modCraft.Repeatable;
+
+            adjusted++;
+        }
+
+        logger.Info($"[CCI] Adjusted {adjusted} Vanilla Cultist Circle crafts");
     }
 
     private void AddCustomCrafts()

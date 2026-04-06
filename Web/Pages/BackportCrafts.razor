@@ -1,0 +1,121 @@
+﻿@page "/cci/backportcrafts"
+@using SPTarkov.Server.Core.Models.Spt.Config
+@using SPTarkov.Server.Core.Models.Common
+@using SPTarkov.Server.Core.Helpers
+@using MudBlazor
+@layout MainLayout
+@inject ISnackbar Snackbar
+@inject ItemHelper ItemHelper
+
+<MudMainContent>
+    <MudContainer Class="mb-20">
+
+        <MudExpansionPanels MultiExpansion="true">
+            <MudExpansionPanel Class="mud-expansion-panels-borders ma-3 pa-5" Text="Backport Crafts" Expanded=true>
+                <MudGrid Spacing="3">
+                    @if (ModConfig.HasBackport)
+                    {
+                        @for (var i = 0; i < ModConfig.ContentBackportCrafts.Count; i++)
+                        {
+                            var craftIndex = i;
+                            var craft = ModConfig.ContentBackportCrafts[craftIndex];
+
+                            <MudItem xs="12">
+                                <MudPaper Class="pa-4" Elevation="1">
+                                    <div class="d-flex justify-between align-center mb-2">
+                                        <MudText Typo="Typo.h6">Craft #@craftIndex</MudText>
+                                    </div>
+
+                                    <MudDivider Class="my-2"/>
+
+                                    <MudGrid>
+                                        <MudItem xs="12" md="6">
+                                            <MudText Typo="Typo.subtitle1" Class="mb-2">Required Items</MudText>
+
+                                            @for (var r = 0; r < requiredItemStrings[craftIndex].Count; r++)
+                                            {
+                                                var requiredIndex = r;
+                                                <MudItem xs="12" Class="d-flex align-center mb-1">
+                                                    <MudTextField T="string"
+                                                                  Value="requiredItemStrings[craftIndex][requiredIndex]"
+                                                                  Variant="Variant.Filled"
+                                                                  Class="mr-2"
+                                                                  Disabled="true"/>
+                                                </MudItem>
+                                            }
+                                        </MudItem>
+
+                                        <MudItem xs="12" md="6">
+                                            <MudText Typo="Typo.subtitle1" Class="mb-2">Rewards</MudText>
+
+                                            @for (var r = 0; r < rewardStrings[craftIndex].Count; r++)
+                                            {
+                                                var rewardIndex = r;
+                                                <MudItem xs="12" Class="d-flex align-center mb-1">
+                                                    <MudTextField T="string"
+                                                                  Value="rewardStrings[craftIndex][rewardIndex]"
+                                                                  Variant="Variant.Filled"
+                                                                  Class="mr-2"
+                                                                  Disabled="true"/>
+                                                </MudItem>
+                                            }
+                                        </MudItem>
+                                    </MudGrid>
+
+                                    <MudItem xs="12" Class="d-flex align-center mb-2">
+                                        <MudText Typo="Typo.subtitle2" Class="mr-2">Craft Time (seconds)</MudText>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Dark" Size="Size.Small">@craft.CraftTimeSeconds</MudButton>
+                                        <MudSlider T="int" @bind-Value="craft.CraftTimeSeconds" Min="1" Max="86400" Step="1" ValueLabel="true" Color="Color.Info" Size="Size.Medium"/>
+                                    </MudItem>
+
+                                    <MudItem xs="12" Class="d-flex align-center mb-2">
+                                        <MudCheckBox @bind-Value="craft.Repeatable" Label="Repeatable" Color="Color.Primary"/>
+                                    </MudItem>
+                                </MudPaper>
+                            </MudItem>
+                        }
+                    }
+                    else
+                    {
+                        <MudItem xs="12">
+                            <MudPaper Class="pa-4" Elevation="1">
+                                <MudText>You don't have WTT's Content Backport installed.</MudText>
+                            </MudPaper>
+                        </MudItem>
+                    }
+                    
+                    
+                </MudGrid>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    </MudContainer>
+</MudMainContent>
+
+@code {
+    private List<List<string>> rewardStrings = new();
+    private List<List<string>> requiredItemStrings = new();
+
+    protected override void OnInitialized()
+    {
+        InitializeStringLists();
+    }
+
+    private void InitializeStringLists()
+    {
+        rewardStrings = ModConfig.ContentBackportCrafts
+            .Select(c => c.Reward
+                .Select(m => ItemHelper.GetItemName(m))
+                .ToList())
+            .ToList();
+
+        requiredItemStrings = ModConfig.ContentBackportCrafts
+            .Select(c => c.RequiredItems
+                .Select(m => ItemHelper.GetItemName(m))
+                .ToList())
+            .ToList();
+    }
+
+    #region CASCADING PARAMETERS
+    [CascadingParameter] public MainLayout? Layout { get; set; }
+    #endregion
+}

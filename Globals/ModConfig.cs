@@ -10,7 +10,7 @@ using SPTarkov.Server.Core.Utils;
 
 namespace _cultistCircleImprovements.Globals;
 
-[Injectable(TypePriority = OnLoadOrder.PreSptModLoader)]
+[Injectable(InjectionType.Singleton, TypePriority = OnLoadOrder.PreSptModLoader)]
 public class ModConfig : IOnLoad
 {
     public ModConfig(
@@ -39,9 +39,12 @@ public class ModConfig : IOnLoad
 
     public static List<DirectRewardSettings> CustomCrafts { get; private set; } = null!;
     public static List<DirectRewardSettings> ContentBackportCrafts { get; private set; } = null!;
+    public static List<DirectRewardSettings> VanillaCrafts { get; private set; } = null!;
     
     private static int _isActivelyProcessingFlag = 0;
     public static string _modPath = string.Empty;
+
+    public static bool HasBackport = false;
     
     public async Task OnLoad()
     {
@@ -50,6 +53,7 @@ public class ModConfig : IOnLoad
         
         CustomCrafts = await _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(Path.Combine(_modPath, "Data", "Crafts.json")) ?? throw new ArgumentNullException();
         ContentBackportCrafts = await _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(Path.Combine(_modPath, "Data", "ContentBackportCrafts.json")) ?? throw new ArgumentNullException();
+        VanillaCrafts = await _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(Path.Combine(_modPath, "Data", "VanillaCrafts.json")) ?? throw new ArgumentNullException();
     }
     
     public static async Task<ConfigOperationResult> ReloadConfig()
@@ -62,6 +66,7 @@ public class ModConfig : IOnLoad
             var configPath = Path.Combine(_modPath, "config.json");
             var customCraftPath = Path.Combine(_modPath, "Data", "Crafts.json");
             var backportCraftPath = Path.Combine(_modPath, "Data", "ContentBackportCrafts.json");
+            var vanillaCraftPath = Path.Combine(_modPath, "Data", "VanillaCrafts.json");
 
             var configTask = _jsonUtil.DeserializeFromFileAsync<ServerConfig>(configPath) ?? throw new FileNotFoundException();
             await Task.WhenAll(configTask);
@@ -72,10 +77,17 @@ public class ModConfig : IOnLoad
             var customCrafts = _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(customCraftPath) ?? throw new FileNotFoundException();
             await Task.WhenAll(customCrafts);
             CustomCrafts = customCrafts.Result ?? throw new ArgumentNullException(nameof(CustomCrafts));
+
+            if (HasBackport)
+            {
+                var backportCrafts = _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(backportCraftPath) ?? throw new FileNotFoundException();
+                await Task.WhenAll(backportCrafts);
+                ContentBackportCrafts = backportCrafts.Result ?? throw new ArgumentNullException(nameof(ContentBackportCrafts));
+            }
             
-            var backportCrafts = _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(backportCraftPath) ?? throw new FileNotFoundException();
-            await Task.WhenAll(backportCrafts);
-            ContentBackportCrafts = backportCrafts.Result ?? throw new ArgumentNullException(nameof(ContentBackportCrafts));
+            var vanillaCrafts = _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(vanillaCraftPath) ?? throw new FileNotFoundException();
+            await Task.WhenAll(vanillaCrafts);
+            VanillaCrafts = vanillaCrafts.Result ?? throw new ArgumentNullException(nameof(VanillaCrafts));
             
             await Task.Run(() => _cultistCircleImprovements.RunConfigLoad());
             return ConfigOperationResult.Success;
@@ -101,8 +113,9 @@ public class ModConfig : IOnLoad
             var configPath = Path.Combine(pathToMod, "config.json");
             var customCraftPath = Path.Combine(pathToMod, "Data", "Crafts.json");
             var backportCraftPath = Path.Combine(pathToMod, "Data", "ContentBackportCrafts.json");
+            var vanillaCraftPath = Path.Combine(pathToMod, "Data", "VanillaCrafts.json");
 
-            //Config
+            // Config
             var serializedConfigTask = Task.Run(() => _jsonUtil.Serialize(Config, true));
             await Task.WhenAll(serializedConfigTask);
 
@@ -111,19 +124,29 @@ public class ModConfig : IOnLoad
             
             OriginalConfig = DeepClone(Config);
 
-            //CustomCrafts
+            // Custom Crafts
             var serializedCustomCraftsTask = Task.Run(() => _jsonUtil.Serialize(CustomCrafts, true));
             await Task.WhenAll(serializedCustomCraftsTask);
 
             var writeCustomCraftsTask = _fileUtil.WriteFileAsync(customCraftPath, serializedCustomCraftsTask.Result!);
             await Task.WhenAll(writeCustomCraftsTask);
 
-            //BackportCrafts
-            var serializedBackportCraftsTask = Task.Run(() => _jsonUtil.Serialize(ContentBackportCrafts, true));
-            await Task.WhenAll(serializedBackportCraftsTask);
+            if (HasBackport)
+            {
+                // Backport Crafts
+                var serializedBackportCraftsTask = Task.Run(() => _jsonUtil.Serialize(ContentBackportCrafts, true));
+                await Task.WhenAll(serializedBackportCraftsTask);
 
-            var writeBackportCraftsTask = _fileUtil.WriteFileAsync(backportCraftPath, serializedBackportCraftsTask.Result!);
-            await Task.WhenAll(writeBackportCraftsTask);
+                var writeBackportCraftsTask = _fileUtil.WriteFileAsync(backportCraftPath, serializedBackportCraftsTask.Result!);
+                await Task.WhenAll(writeBackportCraftsTask);
+            }
+
+            // Vanilla Crafts
+            var serializedVanillaCraftsTask = Task.Run(() => _jsonUtil.Serialize(VanillaCrafts, true));
+            await Task.WhenAll(serializedVanillaCraftsTask);
+            
+            var vanillaCraftsTask = _fileUtil.WriteFileAsync(vanillaCraftPath, serializedVanillaCraftsTask.Result!);
+            await Task.WhenAll(vanillaCraftsTask);
 
             await Task.Run(() => _cultistCircleImprovements.RunConfigLoad());
             return ConfigOperationResult.Success;
