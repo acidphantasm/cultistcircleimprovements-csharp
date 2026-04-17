@@ -275,5 +275,33 @@
     ],
     "craftTimeSeconds": 3960,
     "repeatable": true
+  },
+  {
+    "reward": [
+      "655c66e40b2de553b618d4b8"
+    ],
+    "requiredItems": [
+      "69774bb0a247161ff1068335",
+      "69774bb0a247161ff1068335",
+      "69774bb0a247161ff1068335",
+      "69774bb0a247161ff1068335",
+      "69774bb0a247161ff1068335"
+    ],
+    "craftTimeSeconds": 666,
+    "repeatable": false
+  },
+  {
+    "reward": [
+      "69774bb0a247161ff1068335",
+      "69774bb0a247161ff1068335",
+      "69774bb0a247161ff1068335",
+      "69774bb0a247161ff1068335",
+      "69774bb0a247161ff1068335"
+    ],
+    "requiredItems": [
+      "655c66e40b2de553b618d4b8"
+    ],
+    "craftTimeSeconds": 666,
+    "repeatable": false
   }
 ]
