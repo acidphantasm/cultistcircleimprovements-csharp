@@ -1,7 +1,7 @@
 ﻿using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Spt.Config;
 
-namespace _cultistCircleImprovements.Models;
+namespace CultistCircleImprovementsServer.Models;
 
 public record ServerConfig
 {

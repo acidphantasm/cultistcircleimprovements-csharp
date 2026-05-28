@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
-using _cultistCircleImprovements.Web.Shared;
+using CultistCircleImprovementsServer.Web.Shared;
 
-namespace _cultistCircleImprovements.Web.Core
+namespace CultistCircleImprovementsServer.Web.Core
 {
     internal class Utils
     {

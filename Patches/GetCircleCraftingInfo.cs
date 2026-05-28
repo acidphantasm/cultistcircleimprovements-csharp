@@ -12,7 +12,7 @@ using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Services;
 using SPTarkov.Server.Core.Utils;
 
-namespace _cultistCircleImprovements.Patches;
+namespace CultistCircleImprovementsServer.Patches;
 
 public class PatchGetCircleCraftingInfo : AbstractPatch
 {

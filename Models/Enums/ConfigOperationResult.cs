@@ -1,4 +1,4 @@
-﻿namespace _cultistCircleImprovements.Models.Enums;
+﻿namespace CultistCircleImprovementsServer.Models.Enums;
 
 public enum ConfigOperationResult
 {

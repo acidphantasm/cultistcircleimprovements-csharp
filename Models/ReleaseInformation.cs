@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace _cultistCircleImprovements.Models;
+namespace CultistCircleImprovementsServer.Models;
 
 public record ReleaseInformation
 {

@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
-using _cultistCircleImprovements.Models;
-using _cultistCircleImprovements.Models.Enums;
+using CultistCircleImprovementsServer.Models.Enums;
+using CultistCircleImprovementsServer.Models;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Helpers;
@@ -8,7 +8,7 @@ using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Utils;
 
-namespace _cultistCircleImprovements.Globals;
+namespace CultistCircleImprovementsServer.Globals;
 
 [Injectable(InjectionType.Singleton, TypePriority = OnLoadOrder.PreSptModLoader)]
 public class ModConfig : IOnLoad

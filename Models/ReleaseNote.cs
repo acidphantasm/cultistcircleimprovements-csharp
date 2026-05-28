@@ -1,4 +1,4 @@
-﻿namespace _cultistCircleImprovements.Models;
+﻿namespace CultistCircleImprovementsServer.Models;
 
 public record ReleaseNote
 {

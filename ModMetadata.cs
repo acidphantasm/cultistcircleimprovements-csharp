@@ -1,7 +1,7 @@
 ﻿using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Web;
 
-namespace _cultistCircleImprovements;
+namespace CultistCircleImprovementsServer;
 
 public record ModMetadata : AbstractModMetadata, IModWebMetadata
 {

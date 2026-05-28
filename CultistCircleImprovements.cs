@@ -1,5 +1,5 @@
-using _cultistCircleImprovements.Globals;
-using _cultistCircleImprovements.Patches;
+using CultistCircleImprovementsServer.Globals;
+using CultistCircleImprovementsServer.Patches;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Models.Spt.Config;
@@ -7,7 +7,7 @@ using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Servers;
 
-namespace _cultistCircleImprovements;
+namespace CultistCircleImprovementsServer;
 
 [Injectable(InjectionType.Singleton, TypePriority = OnLoadOrder.PostDBModLoader + 420)]
 public class CultistCircleImprovements(
