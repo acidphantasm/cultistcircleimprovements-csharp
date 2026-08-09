@@ -1,8 +1,22 @@
 ﻿[
   {
+    "Version": "1.1.0",
+    "ReleaseDate": "August 8, 2026",
+    "IsLatest": true,
+    "NewFeatures": [
+      "Update to 4.1"
+    ],
+    "Changes": [
+      "Removed the extra custom crafts (they are vanilla now)",
+      "Updated vanilla crafts"
+    ],
+    "BugFixes": [],
+    "KnownIssues": []
+  },
+  {
     "Version": "1.0.0",
     "ReleaseDate": "April 4, 2026",
-    "IsLatest": true,
+    "IsLatest": false,
     "NewFeatures": [
       "Initial Release"
     ],

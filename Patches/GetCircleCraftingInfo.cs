@@ -1,21 +1,28 @@
-﻿using System.Reflection;
+﻿namespace CultistCircleImprovementsServer.Patches;
+
+using System.Reflection;
 using HarmonyLib;
 using SPTarkov.Reflection.Patching;
-using SPTarkov.Server.Core.DI;
-using SPTarkov.Server.Core.Generators;
-using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Enums.Hideout;
-using SPTarkov.Server.Core.Models.Spt.Bots;
 using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Models.Spt.Hideout;
-using SPTarkov.Server.Core.Models.Utils;
-using SPTarkov.Server.Core.Services;
 using SPTarkov.Server.Core.Utils;
-
-namespace CultistCircleImprovementsServer.Patches;
+using SPTarkov.Common.Models.Logging;
+using SPTarkov.Server.Core.Services.Hideout;
+using SPTarkov.Server.Core.Services.Locales;
 
 public class PatchGetCircleCraftingInfo : AbstractPatch
 {
+    private static ServerLocalisationService _serverLocalisationService = null!;
+    private static ISptLogger<CircleOfCultistService> _logger = null!;
+    private static TimeUtil _timeUtil = null!;
+
+    public PatchGetCircleCraftingInfo(ServerLocalisationService serverLocalisationService, ISptLogger<CircleOfCultistService> logger, TimeUtil timeUtil)
+    {
+        _serverLocalisationService = serverLocalisationService;
+        _logger = logger;
+        _timeUtil = timeUtil;
+    }
     protected override MethodBase GetTargetMethod()
     {
         return AccessTools.Method(typeof(CircleOfCultistService),"GetCircleCraftingInfo");
@@ -29,7 +36,7 @@ public class PatchGetCircleCraftingInfo : AbstractPatch
             Time = -1,
             RewardType = CircleRewardType.RANDOM,
             RewardAmountRoubles = (int)rewardAmountRoubles,
-            RewardDetails = null,
+            RewardDetails = null!,
         };
 
         // Direct reward edge case
@@ -69,10 +76,6 @@ public class PatchGetCircleCraftingInfo : AbstractPatch
     
     private static CraftTimeThreshold GetMatchingThreshold(List<CraftTimeThreshold> thresholds, double rewardAmountRoubles)
     {
-        var localisationService = ServiceLocator.ServiceProvider.GetRequiredService<ServerLocalisationService>();
-        var logger = ServiceLocator.ServiceProvider.GetRequiredService<ISptLogger<CircleOfCultistService>>();
-        var timeUtil = ServiceLocator.ServiceProvider.GetRequiredService<TimeUtil>();
-        
         var matchingThreshold = thresholds.FirstOrDefault(craftThreshold =>
             craftThreshold.Min <= rewardAmountRoubles && craftThreshold.Max >= rewardAmountRoubles
         );
@@ -81,13 +84,11 @@ public class PatchGetCircleCraftingInfo : AbstractPatch
         if (matchingThreshold is null)
         {
             // None found, use a default
-            logger.Warning(
-                localisationService.GetText("cultistcircle-no_matching_threshhold_found", new { rewardAmountRoubles = rewardAmountRoubles })
-            );
+            _logger.Warning(_serverLocalisationService.GetText("cultistcircle-no_matching_threshhold_found", new { rewardAmountRoubles }));
 
             // Use first threshold value (cheapest) from parameter array, otherwise use 12 hours
             var firstThreshold = thresholds.FirstOrDefault();
-            var craftTime = firstThreshold?.CraftTimeSeconds > 0 ? firstThreshold.CraftTimeSeconds : timeUtil.GetHoursAsSeconds(12);
+            var craftTime = firstThreshold?.CraftTimeSeconds > 0 ? firstThreshold.CraftTimeSeconds : _timeUtil.GetHoursAsSeconds(12);
 
             return new CraftTimeThreshold
             {

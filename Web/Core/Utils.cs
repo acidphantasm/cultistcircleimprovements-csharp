@@ -5,9 +5,9 @@ namespace CultistCircleImprovementsServer.Web.Core
 {
     internal class Utils
     {
-        public static List<string> callerList = new List<string>();
+        public static List<string> CallerList = new();
 
-        public static IEnumerable<string> StringObjectIDValidation(string value)
+        public static IEnumerable<string> StringObjectIdValidation(string value)
         {
             if (!string.IsNullOrEmpty(value) && (value.Length != 24 || !IsHex(value)))
             {
@@ -24,12 +24,11 @@ namespace CultistCircleImprovementsServer.Web.Core
 
         public static bool IsHex(IEnumerable<char> chars)
         {
-            bool isHex;
             foreach (var c in chars)
             {
-                isHex = ((c >= '0' && c <= '9') ||
-                         (c >= 'a' && c <= 'f') ||
-                         (c >= 'A' && c <= 'F'));
+                var isHex = ((c >= '0' && c <= '9') ||
+                             (c >= 'a' && c <= 'f') ||
+                             (c >= 'A' && c <= 'F'));
 
                 if (!isHex)
                 {
@@ -42,14 +41,12 @@ namespace CultistCircleImprovementsServer.Web.Core
 
         public static bool IsHexAndValidLength(string value)
         {
-            if (value.Length == 24 && IsHex(value)) return true;
-            else return false;
+            return value.Length == 24 && IsHex(value);
         }
 
         public static bool IsStringAndValidLength(string value)
         {
-            if (value.Length <= 19) return true;
-            else return false;
+            return value.Length <= 19;
         }
 
         public static void UpdateViewBool(bool holder, bool actual)
@@ -116,18 +113,18 @@ namespace CultistCircleImprovementsServer.Web.Core
             switch (MainLayout.pendingChanges.Contains(caller))
             {
                 case true:
-                    if (holder != originalConfigValue) return;
-                    if (holder == originalConfigValue)
+                    if (Math.Abs(holder - originalConfigValue) > 0.001) return;
+                    if (Math.Abs(holder - originalConfigValue) < 0.001)
                     {
                         MainLayout.pendingChanges.Remove(caller);
                     }
                     break;
                 case false:
-                    if (holder != originalConfigValue)
+                    if (Math.Abs(holder - originalConfigValue) > 0.001)
                     {
                         MainLayout.pendingChanges.Add(caller);
                     }
-                    if (holder == originalConfigValue)
+                    if (Math.Abs(holder - originalConfigValue) < 0.001)
                     {
                         MainLayout.pendingChanges.Remove(caller);
                     }

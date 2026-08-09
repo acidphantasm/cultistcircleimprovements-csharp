@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>CultistCircleImprovementsServer</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -20,7 +20,7 @@
         <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
     </PropertyGroup>
     <PropertyGroup>
-        <TarkovDir Condition=" '$(TarkovDir)' == '' ">D:\SPT 4.0.0 DEV\</TarkovDir>
+        <TarkovDir Condition=" '$(TarkovDir)' == '' ">D:\SPT 4.1 BE\</TarkovDir>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -28,11 +28,11 @@
     </PropertyGroup>
     
   <ItemGroup>
-    <PackageReference Include="SPTarkov.Common" Version="4.0.10" />
-    <PackageReference Include="SPTarkov.DI" Version="4.0.10" />
-    <PackageReference Include="SPTarkov.Reflection" Version="4.0.10" />
-    <PackageReference Include="SPTarkov.Server.Core" Version="4.0.10" />
-    <PackageReference Include="SPTarkov.Server.Web" Version="4.0.10" />
+    <PackageReference Include="SPTarkov.Common" Version="4.1.0" />
+    <PackageReference Include="SPTarkov.DI" Version="4.1.0" />
+    <PackageReference Include="SPTarkov.Reflection" Version="4.1.0" />
+    <PackageReference Include="SPTarkov.Server.Core" Version="4.1.0" />
+    <PackageReference Include="SPTarkov.Server.Web" Version="4.1.0" />
   </ItemGroup>
     
   <ItemGroup>
@@ -47,8 +47,8 @@
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
         <PropertyGroup>
-            <ModOutputDir>$(TarkovDir)SPT\user\mods\$(ProjectName)\</ModOutputDir>
-            <ReleaseOutputDir>$(ProjectDir)release\$(ProjectName)\SPT\user\mods\$(ProjectName)\</ReleaseOutputDir>
+            <ModOutputDir>$(TarkovDir)SPT_Runtime\user\mods\$(ProjectName)\</ModOutputDir>
+            <ReleaseOutputDir>$(ProjectDir)release\$(ProjectName)\SPT_Runtime\user\mods\$(ProjectName)\</ReleaseOutputDir>
             <ZipFile>$(ProjectDir)release\$(ProjectName).7z</ZipFile>
             <SevenZipExe>"C:\Program Files\7-Zip\7z.exe"</SevenZipExe>
         </PropertyGroup>

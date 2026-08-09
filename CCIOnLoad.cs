@@ -9,21 +9,19 @@ using SPTarkov.Server.Core.Servers;
 
 namespace CultistCircleImprovementsServer;
 
-[Injectable(InjectionType.Singleton, TypePriority = OnLoadOrder.PostDBModLoader + 420)]
-public class CultistCircleImprovements(
+using SPTarkov.Common.Models.Logging;
+
+[Injectable(InjectionType.Singleton, TypePriority = OnLoadOrder.PostLoad + 420)]
+public class CCIOnLoad(
     IReadOnlyList<SptMod> installedMods,
-    ISptLogger<CultistCircleImprovements> logger,
-    ConfigServer configServer) : IOnLoad
+    ISptLogger<CCIOnLoad> logger,
+    HideoutConfig hideoutConfig) : IOnLoad
 {
-    
-    private readonly HideoutConfig _hideoutConfig = configServer.GetConfig<HideoutConfig>();
-    private List<DirectRewardSettings> _defaultDirectRewards = new List<DirectRewardSettings>();
+    private List<DirectRewardSettings> _defaultDirectRewards = [];
         
-    public Task OnLoad()
+    public Task OnLoadAsync(CancellationToken cancellationToken)
     {
         ModConfig.HasBackport = installedMods.Any(x => x.ModMetadata.ModGuid == "com.wtt.contentbackport");
-        
-        new PatchGetCircleCraftingInfo().Enable();
         
         StoreDefaults();
         RunConfigLoad();
@@ -33,7 +31,7 @@ public class CultistCircleImprovements(
 
     private void StoreDefaults()
     {
-        _defaultDirectRewards = _hideoutConfig.CultistCircle.DirectRewards.ToList();
+        _defaultDirectRewards = hideoutConfig.CultistCircle.DirectRewards.ToList();
     }
 
     public void RunConfigLoad()
@@ -44,7 +42,7 @@ public class CultistCircleImprovements(
     
     private void AdjustConfigValues()
     {
-        var cultistCircleConfig = _hideoutConfig.CultistCircle;
+        var cultistCircleConfig = hideoutConfig.CultistCircle;
 
         cultistCircleConfig.MaxRewardItemCount = ModConfig.Config.MaxRewardItemCount;                                   // Max rewarded items
         cultistCircleConfig.RewardPriceMultiplierMinMax.Min = ModConfig.Config.RewardPriceMultiplierMinMax.Min;         // Min multiplier for the rewarded amount, also multiplied by hideout management skill - final value is the Rouble value sent to calculate rewards
@@ -59,7 +57,7 @@ public class CultistCircleImprovements(
     
     private void AdjustDirectRewardMappings()
     {
-        var cultistCircleConfig = _hideoutConfig.CultistCircle;
+        var cultistCircleConfig = hideoutConfig.CultistCircle;
         
         // Clone the default rewards back to the config
         cultistCircleConfig.DirectRewards = _defaultDirectRewards
@@ -90,7 +88,7 @@ public class CultistCircleImprovements(
 
     private void AdjustVanillaCrafts()
     {
-        var cultistCircleConfig = _hideoutConfig.CultistCircle;
+        var cultistCircleConfig = hideoutConfig.CultistCircle;
 
         var adjusted = 0;
 
@@ -117,7 +115,7 @@ public class CultistCircleImprovements(
 
     private void AddCustomCrafts()
     {
-        var cultistCircleConfig = _hideoutConfig.CultistCircle;
+        var cultistCircleConfig = hideoutConfig.CultistCircle;
 
         var toAdd = ModConfig.CustomCrafts
             .Where(drs =>
@@ -135,7 +133,7 @@ public class CultistCircleImprovements(
 
     private void AddBackportCrafts()
     {
-        var cultistCircleConfig = _hideoutConfig.CultistCircle;
+        var cultistCircleConfig = hideoutConfig.CultistCircle;
 
         var toAdd = ModConfig.ContentBackportCrafts
             .Where(drs =>

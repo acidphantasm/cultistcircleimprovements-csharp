@@ -1,38 +1,34 @@
-﻿using System.Reflection;
-using CultistCircleImprovementsServer.Models.Enums;
-using CultistCircleImprovementsServer.Models;
+﻿namespace CultistCircleImprovementsServer.Globals;
+
+using System.Reflection;
+using Models.Enums;
+using Models;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
-using SPTarkov.Server.Core.Helpers;
 using SPTarkov.Server.Core.Models.Spt.Config;
-using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Utils;
+using SPTarkov.Server.Core.Helpers.Server;
 
-namespace CultistCircleImprovementsServer.Globals;
-
-[Injectable(InjectionType.Singleton, TypePriority = OnLoadOrder.PreSptModLoader)]
+[Injectable(InjectionType.Singleton, TypePriority = OnLoadOrder.Preload)]
 public class ModConfig : IOnLoad
 {
     public ModConfig(
         ModHelper modHelper,
         JsonUtil jsonUtil,
         FileUtil fileUtil,
-        ISptLogger<ModConfig> logger,
-        CultistCircleImprovements cultistCircleImprovements)
+        CCIOnLoad cciOnLoad)
     {
         _modHelper = modHelper;
         _jsonUtil = jsonUtil;
         _fileUtil = fileUtil;
-        _logger = logger;
-        _cultistCircleImprovements = cultistCircleImprovements;
-        _modPath = _modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly());
+        _cciOnLoad = cciOnLoad;
+        ModPath = _modHelper.GetAbsolutePathToModFolder(Assembly.GetExecutingAssembly());
     }
     
-    private static ModHelper? _modHelper;
-    private static JsonUtil? _jsonUtil;
-    private static FileUtil? _fileUtil;
-    private static ISptLogger<ModConfig>? _logger;
-    private static CultistCircleImprovements? _cultistCircleImprovements;
+    private static ModHelper _modHelper = null!;
+    private static JsonUtil _jsonUtil = null!;
+    private static FileUtil _fileUtil = null!;
+    private static CCIOnLoad _cciOnLoad = null!;
     
     public static ServerConfig Config {get; private set;} = null!;
     public static ServerConfig OriginalConfig {get; private set;} = null!;
@@ -42,54 +38,54 @@ public class ModConfig : IOnLoad
     public static List<DirectRewardSettings> VanillaCrafts { get; private set; } = null!;
     
     private static int _isActivelyProcessingFlag = 0;
-    public static string _modPath = string.Empty;
+    public static string ModPath = string.Empty;
 
     public static bool HasBackport = false;
     
-    public async Task OnLoad()
+    public async Task OnLoadAsync(CancellationToken cancellationToken)
     {
-        Config = await _jsonUtil.DeserializeFromFileAsync<ServerConfig>(Path.Combine(_modPath , "config.json")) ?? throw new ArgumentNullException();
+        Config = await _jsonUtil.DeserializeFromFileAsync<ServerConfig>(Path.Combine(ModPath , "config.json"), cancellationToken) ?? throw new ArgumentNullException();
         OriginalConfig = DeepClone(Config);
         
-        CustomCrafts = await _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(Path.Combine(_modPath, "Data", "Crafts.json")) ?? throw new ArgumentNullException();
-        ContentBackportCrafts = await _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(Path.Combine(_modPath, "Data", "ContentBackportCrafts.json")) ?? throw new ArgumentNullException();
-        VanillaCrafts = await _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(Path.Combine(_modPath, "Data", "VanillaCrafts.json")) ?? throw new ArgumentNullException();
+        CustomCrafts = await _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(Path.Combine(ModPath, "Data", "Crafts.json"), cancellationToken) ?? throw new ArgumentNullException();
+        ContentBackportCrafts = await _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(Path.Combine(ModPath, "Data", "ContentBackportCrafts.json"), cancellationToken) ?? throw new ArgumentNullException();
+        VanillaCrafts = await _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(Path.Combine(ModPath, "Data", "VanillaCrafts.json"), cancellationToken) ?? throw new ArgumentNullException();
     }
     
-    public static async Task<ConfigOperationResult> ReloadConfig()
+    public static async Task<ConfigOperationResult> ReloadConfig(CancellationToken cancellationToken = default)
     {
         if (Interlocked.CompareExchange(ref _isActivelyProcessingFlag, 1, 0) != 0)
             return ConfigOperationResult.ActiveProcess;
 
         try
         {
-            var configPath = Path.Combine(_modPath, "config.json");
-            var customCraftPath = Path.Combine(_modPath, "Data", "Crafts.json");
-            var backportCraftPath = Path.Combine(_modPath, "Data", "ContentBackportCrafts.json");
-            var vanillaCraftPath = Path.Combine(_modPath, "Data", "VanillaCrafts.json");
+            var configPath = Path.Combine(ModPath, "config.json");
+            var customCraftPath = Path.Combine(ModPath, "Data", "Crafts.json");
+            var backportCraftPath = Path.Combine(ModPath, "Data", "ContentBackportCrafts.json");
+            var vanillaCraftPath = Path.Combine(ModPath, "Data", "VanillaCrafts.json");
 
-            var configTask = _jsonUtil.DeserializeFromFileAsync<ServerConfig>(configPath) ?? throw new FileNotFoundException();
+            var configTask = _jsonUtil.DeserializeFromFileAsync<ServerConfig>(configPath, cancellationToken) ?? throw new FileNotFoundException();
             await Task.WhenAll(configTask);
 
             Config = configTask.Result ?? throw new ArgumentNullException(nameof(Config));
             OriginalConfig = DeepClone(Config);
 
-            var customCrafts = _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(customCraftPath) ?? throw new FileNotFoundException();
+            var customCrafts = _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(customCraftPath, cancellationToken) ?? throw new FileNotFoundException();
             await Task.WhenAll(customCrafts);
             CustomCrafts = customCrafts.Result ?? throw new ArgumentNullException(nameof(CustomCrafts));
 
             if (HasBackport)
             {
-                var backportCrafts = _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(backportCraftPath) ?? throw new FileNotFoundException();
+                var backportCrafts = _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(backportCraftPath, cancellationToken) ?? throw new FileNotFoundException();
                 await Task.WhenAll(backportCrafts);
                 ContentBackportCrafts = backportCrafts.Result ?? throw new ArgumentNullException(nameof(ContentBackportCrafts));
             }
             
-            var vanillaCrafts = _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(vanillaCraftPath) ?? throw new FileNotFoundException();
+            var vanillaCrafts = _jsonUtil.DeserializeFromFileAsync<List<DirectRewardSettings>>(vanillaCraftPath, cancellationToken) ?? throw new FileNotFoundException();
             await Task.WhenAll(vanillaCrafts);
             VanillaCrafts = vanillaCrafts.Result ?? throw new ArgumentNullException(nameof(VanillaCrafts));
             
-            await Task.Run(() => _cultistCircleImprovements.RunConfigLoad());
+            await Task.Run(() => _cciOnLoad.RunConfigLoad(), cancellationToken);
             return ConfigOperationResult.Success;
         }
         catch (Exception ex)
@@ -102,7 +98,7 @@ public class ModConfig : IOnLoad
         }
     }
     
-    public static async Task<ConfigOperationResult> SaveConfig()
+    public static async Task<ConfigOperationResult> SaveConfig(CancellationToken cancellationToken = default)
     {
         if (Interlocked.CompareExchange(ref _isActivelyProcessingFlag, 1, 0) != 0)
             return ConfigOperationResult.ActiveProcess;
@@ -119,7 +115,7 @@ public class ModConfig : IOnLoad
             var serializedConfigTask = Task.Run(() => _jsonUtil.Serialize(Config, true));
             await Task.WhenAll(serializedConfigTask);
 
-            var writeConfigTask = _fileUtil.WriteFileAsync(configPath, serializedConfigTask.Result!);
+            var writeConfigTask = _fileUtil.WriteFileAsync(configPath, serializedConfigTask.Result!, cancellationToken);
             await Task.WhenAll(writeConfigTask);
             
             OriginalConfig = DeepClone(Config);
@@ -128,7 +124,7 @@ public class ModConfig : IOnLoad
             var serializedCustomCraftsTask = Task.Run(() => _jsonUtil.Serialize(CustomCrafts, true));
             await Task.WhenAll(serializedCustomCraftsTask);
 
-            var writeCustomCraftsTask = _fileUtil.WriteFileAsync(customCraftPath, serializedCustomCraftsTask.Result!);
+            var writeCustomCraftsTask = _fileUtil.WriteFileAsync(customCraftPath, serializedCustomCraftsTask.Result!, cancellationToken);
             await Task.WhenAll(writeCustomCraftsTask);
 
             if (HasBackport)
@@ -137,7 +133,7 @@ public class ModConfig : IOnLoad
                 var serializedBackportCraftsTask = Task.Run(() => _jsonUtil.Serialize(ContentBackportCrafts, true));
                 await Task.WhenAll(serializedBackportCraftsTask);
 
-                var writeBackportCraftsTask = _fileUtil.WriteFileAsync(backportCraftPath, serializedBackportCraftsTask.Result!);
+                var writeBackportCraftsTask = _fileUtil.WriteFileAsync(backportCraftPath, serializedBackportCraftsTask.Result!, cancellationToken);
                 await Task.WhenAll(writeBackportCraftsTask);
             }
 
@@ -145,10 +141,10 @@ public class ModConfig : IOnLoad
             var serializedVanillaCraftsTask = Task.Run(() => _jsonUtil.Serialize(VanillaCrafts, true));
             await Task.WhenAll(serializedVanillaCraftsTask);
             
-            var vanillaCraftsTask = _fileUtil.WriteFileAsync(vanillaCraftPath, serializedVanillaCraftsTask.Result!);
+            var vanillaCraftsTask = _fileUtil.WriteFileAsync(vanillaCraftPath, serializedVanillaCraftsTask.Result!, cancellationToken);
             await Task.WhenAll(vanillaCraftsTask);
 
-            await Task.Run(() => _cultistCircleImprovements.RunConfigLoad());
+            await Task.Run(() => _cciOnLoad.RunConfigLoad(), cancellationToken);
             return ConfigOperationResult.Success;
         }
         catch (Exception ex)
